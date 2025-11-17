@@ -1,7 +1,6 @@
+use anyhow::Context;
+use bose_soundtouch::BoseClient;
 use clap::{Args, Parser, Subcommand};
-
-mod bose_client;
-use bose_client::BoseClient;
 
 /// Control your Bose SoundTouch 20
 #[derive(Parser, Debug)]
@@ -49,26 +48,65 @@ struct GlobalOpts {
     hostname: String,
 }
 
-fn main() {
+#[tokio::main]
+async fn main() {
     let app_args = AppArgs::parse();
-    let client = BoseClient::new(&app_args.global_opts.hostname);
+    let client = BoseClient::new_from_string(&app_args.global_opts.hostname);
     let result = match app_args.command {
-        Command::Status => client.print_status(),
-        Command::Power => client.power(),
-        Command::Play => client.play(),
-        Command::Pause => client.pause(),
+        Command::Status => print_status(&client).await,
+        Command::Power => client
+            .power()
+            .await
+            .with_context(|| "Failed to switch power".to_string()),
+        Command::Play => client
+            .play()
+            .await
+            .with_context(|| "Failed to send play".to_string()),
+        Command::Pause => client
+            .pause()
+            .await
+            .with_context(|| "Failed to send pause".to_string()),
         Command::Volume(volume_args) => match volume_args.value {
-            Some(volume) => client.set_volume(volume),
-            None => client.print_volume(),
+            Some(volume) => client
+                .set_volume(volume)
+                .await
+                .with_context(|| "Failed to set volume".to_string()),
+            None => print_volume(&client).await,
         },
         Command::Preset(preset_args) => match preset_args.value {
-            Some(preset) => client.set_preset(preset),
-            None => client.print_presets(),
+            Some(preset) => client
+                .set_preset(preset)
+                .await
+                .with_context(|| "Failed to change preset".to_string()),
+            None => print_presets(&client).await,
         },
     };
 
-    match result {
-        Err(e) => println!("Failed to execute command because {}", e),
-        Ok(_) => {}
+    if let Err(e) = result {
+        println!("Failed to execute command because {}", e);
     }
+}
+
+async fn print_status(client: &BoseClient) -> anyhow::Result<()> {
+    let status = client.get_status().await?;
+    println!("Status: {:?}", status);
+    Ok(())
+}
+
+async fn print_volume(client: &BoseClient) -> anyhow::Result<()> {
+    let volume = client.get_volume().await?;
+    println!("Volume: {}", volume.actual);
+    Ok(())
+}
+
+async fn print_presets(client: &BoseClient) -> anyhow::Result<()> {
+    let presets = client.get_presets().await?;
+    println!("the presets are: ");
+    for preset in presets.items {
+        println!(
+            "{} - {} ({})",
+            preset.id, preset.content_item.name, preset.content_item.source
+        )
+    }
+    Ok(())
 }
