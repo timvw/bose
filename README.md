@@ -8,6 +8,17 @@ Command-line control for your [Bose SoundTouch 20](https://www.bosebelgium.be/nl
 - This repository provides a ready-to-use binary that depends on `bose_soundtouch` (via a path dependency in development or the crates.io release in production).
 - If you are writing Rust code that needs to integrate with SoundTouch devices directly, depend on `bose_soundtouch` in your project; if you just need a CLI, install/use this repo.
 
+## Installation
+
+```bash
+brew install timvw/tap/bose
+```
+
+This pours the prebuilt universal (arm64 + x86_64) binary from
+[`timvw/homebrew-tap`](https://github.com/timvw/homebrew-tap), so you can start
+using the CLI without installing Rust locally. Keep it current with `brew update
+&& brew upgrade bose` whenever a new release lands.
+
 ## Usage
 
 ```bash
