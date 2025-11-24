@@ -112,7 +112,7 @@ jobs:
       - name: Package
         shell: pwsh
         run: |
-          $artifact = "bose-${{ env:RELEASE_TAG }}-x86_64-pc-windows-msvc"
+          $artifact = "bose-${{ env.RELEASE_TAG }}-x86_64-pc-windows-msvc"
           Remove-Item -Recurse -Force dist -ErrorAction SilentlyContinue
           $staging = "dist/$artifact"
           New-Item -ItemType Directory -Path $staging -Force | Out-Null
