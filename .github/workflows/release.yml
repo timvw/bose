@@ -117,7 +117,7 @@ jobs:
           $staging = "dist/$artifact"
           New-Item -ItemType Directory -Path $staging -Force | Out-Null
           Copy-Item "target/x86_64-pc-windows-msvc/release/bose.exe" "$staging/bose.exe"
-          Copy-Item README.md LICENSE -Destination $staging
+          Copy-Item @("README.md", "LICENSE") -Destination $staging
           Compress-Archive -Path "$staging/*" -DestinationPath "dist/$artifact.zip"
 
       - name: Upload artifact
