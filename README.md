@@ -62,3 +62,12 @@ bose volume 5
 ## Development
 
 The CLI uses the local checkout of `bose_soundtouch` via a `path` dependency. When publishing or building elsewhere, switch the dependency to the crates.io version if desired. Run `cargo check`/`cargo run` as usual; Tokio powers the async main function that forwards all actions to `BoseClient`.
+
+## Release automation
+
+Tagged releases are built and published by the `Release` GitHub Actions workflow:
+
+- Create a semver tag (for example `v0.2.1`) and push it to GitHub: `git tag v0.2.1 && git push origin v0.2.1`.
+- The workflow builds Linux (`x86_64-unknown-linux-gnu`), macOS (universal `aarch64/x86_64`), and Windows (`x86_64-pc-windows-msvc`) binaries in release mode.
+- Each build is packaged with the README and license so downstream taps can consume a single archive per platform (tarballs for macOS/Linux, zip for Windows).
+- After all jobs finish, the artifacts are uploaded to the GitHub release matching the tag, ready for Homebrew or other package automation.
