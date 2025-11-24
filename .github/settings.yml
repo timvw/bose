@@ -1,10 +1,2 @@
 repository:
   delete_branch_on_merge: true
-
-branches:
-  - name: main
-    protection:
-      required_status_checks:
-        strict: true
-        contexts:
-          - "CI / build-and-test"
