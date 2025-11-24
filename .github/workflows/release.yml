@@ -48,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: linux
-          path: bose-${{ env.RELEASE_TAG }}-x86_64-unknown-linux-gnu.tar.gz
+          path: dist/bose-${{ env.RELEASE_TAG }}-x86_64-unknown-linux-gnu.tar.gz
 
   macos:
     name: macOS universal
@@ -93,7 +93,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: macos
-          path: bose-${{ env.RELEASE_TAG }}-apple-darwin-universal.tar.gz
+          path: dist/bose-${{ env.RELEASE_TAG }}-apple-darwin-universal.tar.gz
 
   windows:
     name: Windows x86_64
@@ -124,7 +124,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows
-          path: bose-${{ env.RELEASE_TAG }}-x86_64-pc-windows-msvc.zip
+          path: dist/bose-${{ env.RELEASE_TAG }}-x86_64-pc-windows-msvc.zip
 
   publish:
     name: Publish release
