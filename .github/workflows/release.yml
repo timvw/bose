@@ -2,8 +2,6 @@ name: Release
 
 on:
   push:
-    branches:
-      - main
     tags:
       - 'v*'
   workflow_dispatch:
@@ -17,18 +15,10 @@ permissions:
 
 env:
   CARGO_TERM_COLOR: always
+  RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || github.ref_name }}
 
 jobs:
-  skip-non-release:
-    if: github.event_name != 'workflow_dispatch' && !startsWith(github.ref, 'refs/tags/v')
-    name: Skip non-release trigger
-    runs-on: ubuntu-latest
-    steps:
-      - name: No-op
-        run: echo "Release workflow only runs for tags or manual dispatch."
-
   validate:
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     name: Validate version alignment
     runs-on: ubuntu-latest
     outputs:
@@ -36,23 +26,19 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
       - name: Resolve release tag
         id: resolve_tag
         run: |
           set -euo pipefail
-          TAG="$GITHUB_REF_NAME"
+          TAG="$RELEASE_TAG"
           if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
-            TAG="$(jq -r '.inputs.tag // ""' "$GITHUB_EVENT_PATH")"
-            if [ -z "$TAG" ]; then
-              echo "::error::workflow_dispatch requires input 'tag'" >&2
-              exit 1
-            fi
+            TAG="${{ github.event.inputs.tag }}"
           fi
           echo "RELEASE_TAG=$TAG" >> "$GITHUB_ENV"
           echo "release_tag=$TAG" >> "$GITHUB_OUTPUT"
-
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
 
       - name: Validate tag matches crate version
         run: |
@@ -99,7 +85,6 @@ jobs:
   linux:
     name: Linux x86_64
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     needs: validate
     env:
       RELEASE_TAG: ${{ needs.validate.outputs.release_tag }}
@@ -141,7 +126,6 @@ jobs:
   macos:
     name: macOS universal
     runs-on: macos-latest
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     needs: validate
     env:
       RELEASE_TAG: ${{ needs.validate.outputs.release_tag }}
@@ -190,7 +174,6 @@ jobs:
   windows:
     name: Windows x86_64
     runs-on: windows-latest
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     needs: validate
     env:
       RELEASE_TAG: ${{ needs.validate.outputs.release_tag }}
@@ -225,7 +208,6 @@ jobs:
   publish:
     name: Publish release
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     needs:
       - linux
       - macos
