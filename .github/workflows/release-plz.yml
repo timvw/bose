@@ -1,4 +1,8 @@
-name: Release PR and tag
+name: Release-plz
+
+permissions:
+  pull-requests: write
+  contents: write
 
 on:
   push:
@@ -6,44 +10,21 @@ on:
       - main
   workflow_dispatch:
 
-permissions:
-  contents: write
-  pull-requests: write
-
 jobs:
-  release-pr:
-    name: Open/refresh release PR
+  release-plz:
+    name: Release-plz
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      RELEASE_PLZ_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
-      - name: Set up Rust
+      - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Release PR
+      - name: Run release-plz
         uses: release-plz/action@v0.5
-        with:
-          command: release-pr
-
-  release:
-    name: Tag and create GitHub release
-    needs: release-pr
-    runs-on: ubuntu-latest
-    # Triggered on every main push; release-plz will no-op if there is nothing to release.
-    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      RELEASE_PLZ_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Create release
-        uses: release-plz/action@v0.5
-        with:
-          command: release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_PLZ_TOKEN: ${{ secrets.GITHUB_TOKEN }}
