@@ -20,6 +20,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Create GitHub App token
+        id: app-token
+        if: ${{ secrets.BOT_APP_ID != '' && secrets.BOT_PRIVATE_KEY != '' }}
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
+
       - name: Install release-plz
         uses: taiki-e/install-action@v2
         with:
@@ -27,8 +35,8 @@ jobs:
 
       - name: Run release-plz
         env:
-          GITHUB_TOKEN: ${{ secrets.TIMVW_CI_BOT_TOKEN || secrets.RELEASE_PLZ_TOKEN || secrets.GITHUB_TOKEN }}
-          RELEASE_PLZ_TOKEN: ${{ secrets.TIMVW_CI_BOT_TOKEN || secrets.RELEASE_PLZ_TOKEN || secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token || secrets.TIMVW_CI_BOT_TOKEN || secrets.RELEASE_PLZ_TOKEN || secrets.GITHUB_TOKEN }}
+          RELEASE_PLZ_TOKEN: ${{ steps.app-token.outputs.token || secrets.TIMVW_CI_BOT_TOKEN || secrets.RELEASE_PLZ_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           release-plz release-pr \
