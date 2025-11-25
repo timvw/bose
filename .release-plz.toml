@@ -1,7 +1,7 @@
 [workspace]
 publish = false                 # do not publish to crates.io
 git_tag_enable = true           # create git tags
-git_release_enable = true       # create GitHub releases
-git_release_draft = false       # publish immediately
+git_release_enable = false      # let Release workflow create GH releases
+git_release_draft = false       # (ignored when git_release_enable=false)
 changelog_update = true
 pr_labels = ["release"]
