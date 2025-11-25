@@ -18,6 +18,14 @@ env:
   RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || github.ref_name }}
 
 jobs:
+  skip-non-release:
+    if: github.event_name != 'workflow_dispatch' && !startsWith(github.ref, 'refs/tags/v')
+    name: Skip non-release trigger
+    runs-on: ubuntu-latest
+    steps:
+      - name: No-op
+        run: echo "Release workflow only runs for tags or manual dispatch."
+
   validate:
     if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     name: Validate version alignment
