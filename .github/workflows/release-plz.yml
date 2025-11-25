@@ -5,14 +5,19 @@ permissions:
   contents: write
 
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+    types: [closed]
   workflow_dispatch:
 
 jobs:
   release-plz:
     name: Release-plz
+    # Run when a release PR is merged with the 'release' label, or when manually dispatched
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' &&
+       github.event.pull_request.merged == true &&
+       contains(join(fromJson(toJson(github.event.pull_request.labels)).*.name, ','), 'release'))
     runs-on: ubuntu-latest
     env:
       BOT_APP_ID: ${{ secrets.BOT_APP_ID }}
@@ -22,6 +27,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create GitHub App token
         id: app-token
@@ -36,13 +42,14 @@ jobs:
         with:
           tool: release-plz@0.3.149
 
-      - name: Run release-plz
+      - name: Run release-plz (tag on merged PRs only)
+        if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
           RELEASE_PLZ_TOKEN: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          release-plz release-pr \
+          release-plz release \
             --git-token "${GITHUB_TOKEN}" \
             --repo-url "https://github.com/${GITHUB_REPOSITORY}" \
             --config .release-plz.toml \
