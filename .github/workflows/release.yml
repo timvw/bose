@@ -15,12 +15,64 @@ permissions:
 
 env:
   CARGO_TERM_COLOR: always
-  RELEASE_TAG: ${{ github.ref_name }}
+  RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || github.ref_name }}
 
 jobs:
+  validate:
+    name: Validate version alignment
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Validate tag matches crate version
+        run: |
+          set -euo pipefail
+          if [ -z "${RELEASE_TAG:-}" ]; then
+            echo "::error::RELEASE_TAG is empty; expected a tag like v0.0.0" >&2
+            exit 1
+          fi
+
+          TAG_VERSION="${RELEASE_TAG#v}"
+          if [ "$TAG_VERSION" = "$RELEASE_TAG" ]; then
+            echo "::error::Release tag \"$RELEASE_TAG\" must start with v (e.g. v0.2.3)" >&2
+            exit 1
+          fi
+
+          MANIFEST_VERSION=$(cargo metadata --format-version 1 --no-deps --locked | jq -r '.packages[] | select(.name == "bose") | .version')
+          if [ "$MANIFEST_VERSION" != "$TAG_VERSION" ]; then
+            echo "::error::Cargo.toml version $MANIFEST_VERSION does not match tag $RELEASE_TAG. Bump with: cargo set-version $TAG_VERSION && cargo update -p bose --precise $TAG_VERSION" >&2
+            exit 1
+          fi
+
+          LOCK_VERSION=$(python - <<'PY'
+import pathlib, sys
+lines = pathlib.Path("Cargo.lock").read_text().splitlines()
+for idx, line in enumerate(lines):
+    if line.strip() == 'name = "bose"':
+        for next_line in lines[idx + 1 : idx + 6]:
+            stripped = next_line.strip()
+            if stripped.startswith("version = "):
+                version = stripped.split("=", 1)[1].strip().strip('"')
+                print(version)
+                sys.exit(0)
+        break
+sys.exit("Package bose not found in Cargo.lock")
+PY
+)
+          if [ "$LOCK_VERSION" != "$TAG_VERSION" ]; then
+            echo "::error::Cargo.lock version $LOCK_VERSION does not match tag $RELEASE_TAG. Run: cargo update -p bose --precise $TAG_VERSION" >&2
+            exit 1
+          fi
+
+          echo "Release tag $RELEASE_TAG matches Cargo.toml/Cargo.lock version $TAG_VERSION"
+
   linux:
     name: Linux x86_64
     runs-on: ubuntu-latest
+    needs: validate
     steps:
       - uses: actions/checkout@v6
 
@@ -31,6 +83,12 @@ jobs:
 
       - name: Build
         run: cargo build --locked --release --target x86_64-unknown-linux-gnu
+
+      - name: Verify binary version output
+        run: |
+          set -euo pipefail
+          TAG_VERSION="${RELEASE_TAG#v}"
+          ./target/x86_64-unknown-linux-gnu/release/bose --version | grep -F "bose $TAG_VERSION"
 
       - name: Package
         run: |
@@ -53,6 +111,7 @@ jobs:
   macos:
     name: macOS universal
     runs-on: macos-latest
+    needs: validate
     steps:
       - uses: actions/checkout@v6
 
@@ -98,6 +157,7 @@ jobs:
   windows:
     name: Windows x86_64
     runs-on: windows-latest
+    needs: validate
     steps:
       - uses: actions/checkout@v6
 
