@@ -17,7 +17,6 @@ permissions:
 
 env:
   CARGO_TERM_COLOR: always
-  RELEASE_TAG: ${{ inputs.tag != '' && inputs.tag || github.ref_name }}
 
 jobs:
   skip-non-release:
@@ -32,8 +31,25 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     name: Validate version alignment
     runs-on: ubuntu-latest
+    outputs:
+      release_tag: ${{ steps.resolve_tag.outputs.release_tag }}
     steps:
       - uses: actions/checkout@v6
+
+      - name: Resolve release tag
+        id: resolve_tag
+        run: |
+          set -euo pipefail
+          TAG="$GITHUB_REF_NAME"
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            TAG="$(jq -r '.inputs.tag // ""' "$GITHUB_EVENT_PATH")"
+            if [ -z "$TAG" ]; then
+              echo "::error::workflow_dispatch requires input 'tag'" >&2
+              exit 1
+            fi
+          fi
+          echo "RELEASE_TAG=$TAG" >> "$GITHUB_ENV"
+          echo "release_tag=$TAG" >> "$GITHUB_OUTPUT"
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -85,6 +101,8 @@ PY
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     needs: validate
+    env:
+      RELEASE_TAG: ${{ needs.validate.outputs.release_tag }}
     steps:
       - uses: actions/checkout@v6
 
@@ -125,6 +143,8 @@ PY
     runs-on: macos-latest
     if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     needs: validate
+    env:
+      RELEASE_TAG: ${{ needs.validate.outputs.release_tag }}
     steps:
       - uses: actions/checkout@v6
 
@@ -172,6 +192,8 @@ PY
     runs-on: windows-latest
     if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     needs: validate
+    env:
+      RELEASE_TAG: ${{ needs.validate.outputs.release_tag }}
     steps:
       - uses: actions/checkout@v6
 
@@ -208,6 +230,8 @@ PY
       - linux
       - macos
       - windows
+    env:
+      RELEASE_TAG: ${{ needs.validate.outputs.release_tag }}
     steps:
       - name: Download linux artifact
         uses: actions/download-artifact@v6
