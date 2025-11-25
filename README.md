@@ -52,9 +52,3 @@ Set the volume to 5:
 ```bash
 bose volume 5
 ```
-
-## Release process
-
-- Bump the crate version before tagging: `cargo set-version X.Y.Z && cargo update -p bose --precise X.Y.Z` (keeps Cargo.toml and Cargo.lock aligned).
-- Create and push a matching tag: `git tag vX.Y.Z && git push origin vX.Y.Z` (or provide `tag: vX.Y.Z` when dispatching the Release workflow).
-- The GitHub Actions Release workflow validates the tag against crate metadata and fails early if they differ, and it verifies the built binary reports the tagged version.
