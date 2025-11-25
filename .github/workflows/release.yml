@@ -75,20 +75,20 @@ jobs:
           fi
 
           LOCK_VERSION=$(python - <<'PY'
-import pathlib, sys
-lines = pathlib.Path("Cargo.lock").read_text().splitlines()
-for idx, line in enumerate(lines):
-    if line.strip() == 'name = "bose"':
-        for next_line in lines[idx + 1 : idx + 6]:
-            stripped = next_line.strip()
-            if stripped.startswith("version = "):
-                version = stripped.split("=", 1)[1].strip().strip('"')
-                print(version)
-                sys.exit(0)
-        break
-sys.exit("Package bose not found in Cargo.lock")
-PY
-)
+          import pathlib, sys
+          lines = pathlib.Path("Cargo.lock").read_text().splitlines()
+          for idx, line in enumerate(lines):
+              if line.strip() == 'name = "bose"':
+                  for next_line in lines[idx + 1 : idx + 6]:
+                      stripped = next_line.strip()
+                      if stripped.startswith("version = "):
+                          version = stripped.split("=", 1)[1].strip().strip('"')
+                          print(version)
+                          sys.exit(0)
+                  break
+          sys.exit("Package bose not found in Cargo.lock")
+          PY
+          )
           if [ "$LOCK_VERSION" != "$TAG_VERSION" ]; then
             echo "::error::Cargo.lock version $LOCK_VERSION does not match tag $RELEASE_TAG. Run: cargo update -p bose --precise $TAG_VERSION" >&2
             exit 1
