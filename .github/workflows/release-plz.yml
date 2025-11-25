@@ -25,25 +25,14 @@ jobs:
         with:
           tool: release-plz@0.3.149
 
-      - name: Prepare released manifest
-        id: registry_manifest
-        run: |
-          set -euo pipefail
-          latest_tag=$(git tag --list 'v*' --sort=-v:refname | head -n 1 || true)
-          if [ -n "$latest_tag" ]; then
-            git worktree add /tmp/released "$latest_tag"
-            echo "path=/tmp/released/Cargo.toml" >> "$GITHUB_OUTPUT"
-          else
-            echo "path=" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Run release-plz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          args=(release-pr --git-token "${GITHUB_TOKEN}" --repo-url "https://github.com/${GITHUB_REPOSITORY}" --config .release-plz.toml -o json)
-          if [ -n "${{ steps.registry_manifest.outputs.path }}" ]; then
-            args+=(--registry-project-manifest "${{ steps.registry_manifest.outputs.path }}")
-          fi
-          release-plz "${args[@]}"
+          release-plz release-pr \
+            --git-token "${GITHUB_TOKEN}" \
+            --repo-url "https://github.com/${GITHUB_REPOSITORY}" \
+            --config .release-plz.toml \
+            --registry-project-manifest "$(pwd)/Cargo.toml" \
+            -o json
