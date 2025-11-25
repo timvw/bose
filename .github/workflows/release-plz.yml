@@ -35,8 +35,8 @@ jobs:
 
       - name: Run release-plz
         env:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token || secrets.TIMVW_CI_BOT_TOKEN || secrets.RELEASE_PLZ_TOKEN || secrets.GITHUB_TOKEN }}
-          RELEASE_PLZ_TOKEN: ${{ steps.app-token.outputs.token || secrets.TIMVW_CI_BOT_TOKEN || secrets.RELEASE_PLZ_TOKEN || secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
+          RELEASE_PLZ_TOKEN: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           release-plz release-pr \
