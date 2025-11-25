@@ -1,0 +1,7 @@
+[workspace]
+publish = false                 # do not publish to crates.io
+git_tag_enable = true           # create git tags
+git_release_enable = true       # create GitHub releases
+git_release_draft = false       # publish immediately
+changelog_update = true
+allow_empty = false
