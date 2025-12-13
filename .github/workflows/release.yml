@@ -118,7 +118,7 @@ jobs:
           (cd dist && tar -czf "$ARTIFACT.tar.gz" "$ARTIFACT")
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: linux
           path: dist/bose-${{ env.RELEASE_TAG }}-x86_64-unknown-linux-gnu.tar.gz
@@ -166,7 +166,7 @@ jobs:
           (cd dist && tar -czf "$ARTIFACT.tar.gz" "$ARTIFACT")
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: macos
           path: dist/bose-${{ env.RELEASE_TAG }}-apple-darwin-universal.tar.gz
@@ -200,7 +200,7 @@ jobs:
           Compress-Archive -Path "$staging/*" -DestinationPath "dist/$artifact.zip"
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: windows
           path: dist/bose-${{ env.RELEASE_TAG }}-x86_64-pc-windows-msvc.zip
@@ -216,19 +216,19 @@ jobs:
       RELEASE_TAG: ${{ needs.validate.outputs.release_tag }}
     steps:
       - name: Download linux artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: linux
           path: dist
 
       - name: Download mac artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: macos
           path: dist
 
       - name: Download windows artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: windows
           path: dist
