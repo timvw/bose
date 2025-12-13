@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.11](https://github.com/timvw/bose/compare/v0.2.10...v0.2.11) - 2025-12-13
+
+### Other
+
+- *(deps)* update github artifact actions
+
 ## [0.2.10](https://github.com/timvw/bose/compare/v0.2.9...v0.2.10) - 2025-11-25
 
 ### Other
