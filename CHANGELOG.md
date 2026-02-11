@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.11](https://github.com/timvw/bose/compare/v0.2.10...v0.2.11) - 2026-02-11
+
+### Other
+
+- *(deps)* update rust crate clap to v4.5.58 ([#46](https://github.com/timvw/bose/pull/46))
+- *(deps)* update rust crate clap to v4.5.57 ([#43](https://github.com/timvw/bose/pull/43))
+- Bump bytes from 1.11.0 to 1.11.1 ([#44](https://github.com/timvw/bose/pull/44))
+- *(deps)* update rust crate anyhow to v1.0.101
+- *(deps)* update rust crate clap to v4.5.55
+- Merge pull request #41 from timvw/renovate/tokio-1.x-lockfile
+- *(deps)* update rust crate tokio to v1.49.0
+- *(deps)* update github artifact actions
+
 ## [0.2.10](https://github.com/timvw/bose/compare/v0.2.9...v0.2.10) - 2025-11-25
 
 ### Other
