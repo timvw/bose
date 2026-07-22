@@ -7,6 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.11](https://github.com/timvw/bose/compare/v0.2.10...v0.2.11) - 2026-07-22
+
+### Other
+
+- *(deps)* update rust crate clap to v4.6.4 ([#71](https://github.com/timvw/bose/pull/71))
+- *(deps)* update rust crate tokio to v1.53.1 ([#70](https://github.com/timvw/bose/pull/70))
+- *(deps)* update rust crate clap to v4.6.3 ([#69](https://github.com/timvw/bose/pull/69))
+- *(deps)* update rust crate anyhow to v1.0.104 ([#68](https://github.com/timvw/bose/pull/68))
+- *(deps)* update rust crate tokio to v1.53.0 ([#67](https://github.com/timvw/bose/pull/67))
+- *(deps)* update rust crate clap to v4.6.2 ([#66](https://github.com/timvw/bose/pull/66))
+- *(deps)* update rust crate anyhow to v1.0.103 ([#65](https://github.com/timvw/bose/pull/65))
+- *(deps)* update actions/checkout action to v7 ([#64](https://github.com/timvw/bose/pull/64))
+- *(deps)* update rust crate tokio to v1.52.3 ([#63](https://github.com/timvw/bose/pull/63))
+- *(deps)* update rust crate tokio to v1.52.2 ([#62](https://github.com/timvw/bose/pull/62))
+- *(deps)* update softprops/action-gh-release action to v3 ([#57](https://github.com/timvw/bose/pull/57))
+- *(deps)* update rust crate clap to v4.6.1 ([#59](https://github.com/timvw/bose/pull/59))
+- *(deps)* update rust crate tokio to v1.52.1 ([#58](https://github.com/timvw/bose/pull/58))
+- enable Renovate automerge for dependency updates
+- *(deps)* update rust crate tokio to v1.51.1 ([#56](https://github.com/timvw/bose/pull/56))
+- *(deps)* update rust crate tokio to v1.51.0 ([#55](https://github.com/timvw/bose/pull/55))
+- Bump rustls-webpki from 0.103.8 to 0.103.10 ([#54](https://github.com/timvw/bose/pull/54))
+- *(deps)* update actions/create-github-app-token action to v3 ([#53](https://github.com/timvw/bose/pull/53))
+- *(deps)* update rust crate clap to v4.6.0 ([#52](https://github.com/timvw/bose/pull/52))
+- *(deps)* update rust crate tokio to v1.50.0 ([#51](https://github.com/timvw/bose/pull/51))
+- *(deps)* update github artifact actions ([#50](https://github.com/timvw/bose/pull/50))
+- *(deps)* update rust crate clap to v4.5.60 ([#48](https://github.com/timvw/bose/pull/48))
+- *(deps)* update rust crate anyhow to v1.0.102 ([#49](https://github.com/timvw/bose/pull/49))
+- *(deps)* update rust crate clap to v4.5.59 ([#47](https://github.com/timvw/bose/pull/47))
+- *(deps)* update rust crate clap to v4.5.58 ([#46](https://github.com/timvw/bose/pull/46))
+- *(deps)* update rust crate clap to v4.5.57 ([#43](https://github.com/timvw/bose/pull/43))
+- Bump bytes from 1.11.0 to 1.11.1 ([#44](https://github.com/timvw/bose/pull/44))
+- *(deps)* update rust crate anyhow to v1.0.101
+- *(deps)* update rust crate clap to v4.5.55
+- Merge pull request #41 from timvw/renovate/tokio-1.x-lockfile
+- *(deps)* update rust crate tokio to v1.49.0
+- *(deps)* update github artifact actions
+
 ## [0.2.10](https://github.com/timvw/bose/compare/v0.2.9...v0.2.10) - 2025-11-25
 
 ### Other
